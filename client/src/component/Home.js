@@ -1,76 +1,88 @@
-import React, { useState } from 'react'
-import toast from 'react-hot-toast'
-import { v4 as uuid } from 'uuid'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { v4 as uuidV4 } from 'uuid';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
-function Home() {
-    const [roomId, setRoomId] = useState("")
-    const [username, setUsername] = useState("")
-    const navigate = useNavigate()
+const Home = () => {
+    const navigate = useNavigate();
+    const [roomId, setRoomId] = useState('');
+    const [username, setUsername] = useState('');
 
-    const generateRoomId = (e) => {
-      e.preventDefault()
-      const id = uuid()
-      setRoomId(id)
-      toast.success("Room Id is generated")
-    }
+    const createNewRoom = (e) => {
+        e.preventDefault();
+        const id = uuidV4();
+        setRoomId(id);
+        toast.success('Generated a new room ID');
+    };
 
-    const joinRoom = () => {     
-      if(!roomId || !username){
-          toast.error("Both the field is required")
-          return
-      }
-      // Navigate
-      navigate(`/editor/${roomId}`, {
-        state: { username },
-      })
-      toast.success("Room is created")
-  }
-  return (
-    <div className='container-fluid'>
-     <div className='row justify-content-center align-items-center min-vh-100'>
-       <div  className='col-12 col-md-6'>
-       <div className='card shadow-sm p-2 mb-5 bg-secondry rounded'>
-          <div className='card-body text-center bg-dark'>
-          <img className='img-fluid mx-auto d-block' 
-            src='/images/codecast.png'
-             alt='Codesync'
-             style={{maxWidth: "150px"}}
-             />
-             <h4 className='text-light'>Enter the Room Id</h4>
-             <div className='form group'>
-             <input 
-               value={roomId}
-               onChange={(e) => setRoomId(e.target.value)}
-               type='text' 
-               className='form-control mb-2'
-               placeholder='Room Id'
-             />
-             </div>
-             <div className='form group'>
-             <input
-               value={username}
-               onChange={(e) => setUsername(e.target.value)}
-               type='text' 
-               className='form-control mb-2'
-               placeholder='Username'
-             />
-             </div>
-            <button onClick={joinRoom} className='btn btn-success btn-lg btn-block'>JOIN</button>
-            <p className='mt-3 text-light'>
-              Don't have a room Id? {""}
-              <span className='text-success p-2'
-              style={{ cursor:'pointer' }}
-              onClick={ generateRoomId }
-              >New Room
-              </span>
-              </p>
-          </div>
+    const joinRoom = () => {
+        if (!roomId || !username) {
+            toast.error('Room ID & username is required');
+            return;
+        }
+
+        // Redirect
+        navigate(`/editor/${roomId}`, {
+            state: {
+                username,
+            },
+        });
+    };
+
+    const handleInputEnter = (e) => {
+        if (e.code === 'Enter') {
+            joinRoom();
+        }
+    };
+
+    return (
+        <div className="homePageWrapper">
+            <div className="formWrapper glass">
+                <div className="mainLabel">
+                    <div className="logoIcon" style={{fontSize: '2.5rem'}}>⚡</div>
+                    <span>CodeSync Pro</span>
+                    <p style={{fontSize: '0.9rem', color: '#8b949e', fontWeight: '400', marginTop: '5px'}}>
+                        Real-time collaborative workspace
+                    </p>
+                </div>
+                <div className="inputGroup">
+                    <input
+                        type="text"
+                        className="inputBox"
+                        placeholder="ROOM ID"
+                        onChange={(e) => setRoomId(e.target.value)}
+                        value={roomId}
+                        onKeyUp={handleInputEnter}
+                    />
+                    <input
+                        type="text"
+                        className="inputBox"
+                        placeholder="USERNAME"
+                        onChange={(e) => setUsername(e.target.value)}
+                        value={username}
+                        onKeyUp={handleInputEnter}
+                    />
+                    <button className="btn btn-primary" onClick={joinRoom} style={{width: '100%', height: '45px'}}>
+                        Join Workspace
+                    </button>
+                    <span className="createInfo">
+                        If you don't have an invite then create &nbsp;
+                        <button
+                            onClick={createNewRoom}
+                            className="createNewBtn"
+                            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit', textDecoration: 'underline' }}
+                        >
+                            new room
+                        </button>
+                    </span>
+                </div>
+            </div>
+
+            <footer style={{position: 'absolute', bottom: '20px', color: '#484f58', fontSize: '0.8rem'}}>
+                Built for professional collaborative engineering
+            </footer>
         </div>
-       </div>
-     </div>
-    </div>
-  )
-}
+    );
+};
 
-export default Home
+export default Home;
